@@ -1,1 +1,528 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Intenciones de Misa</title>
+    <!-- Fuentes y Estilos -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- FullCalendar -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --primary: #4f46e5;
+            --secondary: #6366f1;
+            --text-main: #1e293b;
+            --card-bg: #ffffff;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+        .navbar-custom {
+            background-color: var(--card-bg);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            padding: 15px 30px;
+        }
+        .nav-pills .nav-link {
+            color: var(--text-main);
+            border-radius: 10px;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+        .nav-pills .nav-link.active {
+            background-color: var(--primary);
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+        }
+        .card-custom {
+            background: var(--card-bg);
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+            padding: 25px;
+            animation: fadeIn 0.5s ease;
+        }
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            padding: 12px 15px;
+            transition: all 0.2s;
+        }
+        .form-control:focus, .form-select:focus {
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+            border-color: var(--primary);
+        }
+        .textarea-word {
+            min-height: 200px;
+            line-height: 1.8;
+            font-size: 1.05rem;
+            background-color: #fafafa;
+        }
+        .btn-primary-custom {
+            background-color: var(--primary);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .btn-primary-custom:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(79, 70, 229, 0.4);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Loader */
+        #loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.9); z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+        .spinner {
+            width: 50px; height: 50px; border: 5px solid #e2e8f0;
+            border-top: 5px solid var(--primary); border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .event-comunitaria { background-color: #0d6efd !important; border: none; }
+        .event-particular { background-color: #6f42c1 !important; border: none; }
+    </style>
+</head>
+<body>
+
+    <!-- Loader -->
+    <div id="loader">
+        <div class="spinner"></div>
+        <p class="mt-3 font-weight-bold text-muted">Sincronizando sistema...</p>
+    </div>
+
+    <!-- Navegación Minimalista -->
+    <nav class="navbar-custom d-flex justify-content-between align-items-center mb-4">
+        <h4 class="m-0 fw-bold" style="color: var(--primary);">
+            <i class="fa-solid fa-church me-2"></i>ParroquiaSys
+        </h4>
+    </nav>
+
+    <div class="container-fluid px-4 pb-5">
+        <div class="row">
+            <!-- Sidebar / Tabs -->
+            <div class="col-md-3 col-lg-2 mb-4">
+                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    <button class="nav-link active mb-2 text-start" data-bs-toggle="pill" data-bs-target="#tab-calendar">
+                        <i class="fa-regular fa-calendar-days me-2"></i> Calendario
+                    </button>
+                    <button class="nav-link mb-2 text-start" data-bs-toggle="pill" data-bs-target="#tab-comunitaria">
+                        <i class="fa-solid fa-users me-2"></i> Comunitaria
+                    </button>
+                    <button class="nav-link mb-2 text-start" data-bs-toggle="pill" data-bs-target="#tab-particular">
+                        <i class="fa-solid fa-user me-2"></i> Particular
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="col-md-9 col-lg-10">
+                <div class="tab-content" id="v-pills-tabContent">
+                    
+                    <!-- TAB CALENDARIO -->
+                    <div class="tab-pane fade show active" id="tab-calendar">
+                        <div class="card-custom">
+                            <h5 class="fw-bold mb-4">Calendario de Misas</h5>
+                            <div id="calendar"></div>
+                        </div>
+                    </div>
+
+                    <!-- TAB COMUNITARIA -->
+                    <div class="tab-pane fade" id="tab-comunitaria">
+                        <div class="card-custom max-w-lg mx-auto" style="max-width: 800px;">
+                            <h5 class="fw-bold mb-3">Registrar Intenciones Comunitarias</h5>
+                            <p class="text-muted small mb-4">Escribe una intención y presiona ENTER para la siguiente. Se guardarán individualmente y de forma instantánea.</p>
+                            
+                            <form id="formComunitaria" onsubmit="guardarComunitaria(event)">
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label text-muted small">Fecha de Misa</label>
+                                        <input type="date" class="form-control" id="c_fecha" required onchange="actualizarHorariosComunitaria()">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label text-muted small">Horario</label>
+                                        <select class="form-select" id="c_hora" required>
+                                            <option value="6:00 PM">6:00 PM</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label text-muted small">Sacerdote</label>
+                                        <select class="form-select select-sacerdote" id="c_sacerdote" required></select>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label text-muted small">Categoría</label>
+                                    <select class="form-select" id="c_categoria" required>
+                                        <option value="Por la Salud">Por la Salud</option>
+                                        <option value="Por la Vida y la Salud">Por la Vida y la Salud</option>
+                                        <option value="En Acción de Gracias">En Acción de Gracias</option>
+                                        <option value="Por el Alma">Por el Alma</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label text-muted small">Listado de Intenciones (Estilo Word)</label>
+                                    <textarea class="form-control textarea-word" id="c_text" placeholder="Ej:&#10;Juan Pérez&#10;María Gómez&#10;Familia Rojas" required></textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary-custom w-100" id="btnComunitaria">
+                                    <i class="fa-solid fa-floppy-disk me-2"></i> Guardar Lista
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- TAB PARTICULAR -->
+                    <div class="tab-pane fade" id="tab-particular">
+                        <div class="card-custom mx-auto" style="max-width: 600px;">
+                            <h5 class="fw-bold mb-4">Registrar Misa Particular</h5>
+                            
+                            <form id="formParticular" onsubmit="guardarParticular(event)">
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label text-muted small">Fecha</label>
+                                        <input type="date" class="form-control" id="p_fecha" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label text-muted small">Horario</label>
+                                        <select class="form-select" id="p_hora" required>
+                                            <option value="4:45 PM">4:45 PM</option>
+                                            <option value="5:00 PM">5:00 PM</option>
+                                            <option value="7:00 PM">7:00 PM</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label text-muted small">Sacerdote</label>
+                                    <select class="form-select select-sacerdote" id="p_sacerdote" required></select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label text-muted small">Categoría</label>
+                                    <select class="form-select" id="p_categoria" required>
+                                        <option value="Por la Salud">Por la Salud</option>
+                                        <option value="Por la Vida y la Salud">Por la Vida y la Salud</option>
+                                        <option value="En Acción de Gracias">En Acción de Gracias</option>
+                                        <option value="Por el Alma">Por el Alma</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label text-muted small">Intención (Para quién)</label>
+                                    <input type="text" class="form-control" id="p_intencion" placeholder="Nombre completo" required>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label text-muted small">Motivo (Opcional)</label>
+                                    <textarea class="form-control" id="p_motivo" rows="2" placeholder="Motivo de la intención"></textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary-custom w-100" id="btnParticular">
+                                    <i class="fa-solid fa-paper-plane me-2"></i> Registrar Misa
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Ver/Editar Día -->
+    <div class="modal fade" id="diaModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content border-0" style="border-radius: 16px;">
+                <div class="modal-header border-0 bg-light">
+                    <h5 class="modal-title fw-bold" id="diaModalTitle">Intenciones del Día</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="diaModalBody">
+                    <!-- Contenido dinámico inyectado por JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // ==========================================
+        //  UX/UI & LOGIC BY EXPERT PROGRAMMER
+        // ==========================================
+
+        const API_URL = "URL_DE_TU_WEB_APP_AQUI"; // ¡PEGAR LA URL DE APPSCRIPT AQUÍ!
+        
+        let localData = { sacerdotes: [], intenciones:[] };
+        let calendar;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await cargarDatosIniciales();
+            initCalendar();
+            document.getElementById('loader').style.display = 'none';
+        });
+
+        // 1. Fetch API Centralizado (Optimizado para evitar bloqueos)
+        async function fetchAPI(action, data = {}) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action, data })
+                });
+                const result = await response.json();
+                if(result.status === 'error') throw new Error(result.message);
+                return result.data;
+            } catch (error) {
+                Swal.fire('Error de Conexión', error.message, 'error');
+                return null;
+            }
+        }
+
+        // 2. Cargar Datos y Llenar Selects
+        async function cargarDatosIniciales() {
+            const data = await fetchAPI('getInitialData');
+            if(data) {
+                localData = data;
+                llenarSacerdotes();
+            }
+        }
+
+        function llenarSacerdotes() {
+            const selects = document.querySelectorAll('.select-sacerdote');
+            let optionsHTML = '';
+            let defaultId = '';
+            
+            localData.sacerdotes.forEach(s => {
+                let isDefecto = s.esDefecto === true || s.esDefecto === 'TRUE';
+                if(isDefecto) defaultId = s.nombre;
+                optionsHTML += `<option value="${s.nombre}">${s.nombre} ${isDefecto ? '(Predeterminado)' : ''}</option>`;
+            });
+
+            selects.forEach(select => {
+                select.innerHTML = optionsHTML;
+                if(defaultId) select.value = defaultId;
+            });
+        }
+
+        // 3. Lógica Especial de Horarios (UX: Domingos vs Lunes a Sábado)
+        function actualizarHorariosComunitaria() {
+            const fechaInput = document.getElementById('c_fecha').value;
+            if(!fechaInput) return;
+            
+            // Usamos split para evitar problemas de Timezone de Javascript
+            const partes = fechaInput.split('-');
+            const date = new Date(partes[0], partes[1] - 1, partes[2]);
+            const selectHora = document.getElementById('c_hora');
+            
+            if (date.getDay() === 0) { // 0 es Domingo
+                selectHora.innerHTML = `
+                    <option value="9:00 AM">9:00 AM</option>
+                    <option value="12:00 PM">12:00 PM</option>
+                    <option value="6:00 PM">6:00 PM</option>`;
+            } else { // Lunes a Sábado
+                selectHora.innerHTML = `<option value="6:00 PM">6:00 PM</option>`;
+            }
+        }
+
+        // 4. Guardado "Estilo Word" (Comunitarias)
+        async function guardarComunitaria(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnComunitaria');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
+            btn.disabled = true;
+
+            const payload = {
+                fechaMisa: document.getElementById('c_fecha').value,
+                horaMisa: document.getElementById('c_hora').value,
+                sacerdote: document.getElementById('c_sacerdote').value,
+                categoria: document.getElementById('c_categoria').value,
+                textoIntenciones: document.getElementById('c_text').value
+            };
+
+            const result = await fetchAPI('saveComunitarias', payload);
+            
+            btn.innerHTML = '<i class="fa-solid fa-floppy-disk me-2"></i> Guardar Lista';
+            btn.disabled = false;
+
+            if(result) {
+                Swal.fire({
+                    icon: 'success', title: '¡Éxito!',
+                    text: `Se registraron ${result} intenciones.`,
+                    timer: 2000, showConfirmButton: false
+                });
+                document.getElementById('c_text').value = ''; // Limpiar textarea
+                await refrescarCalendario();
+            }
+        }
+
+        // 5. Guardado Particular
+        async function guardarParticular(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnParticular');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
+            btn.disabled = true;
+
+            const payload = {
+                fechaMisa: document.getElementById('p_fecha').value,
+                horaMisa: document.getElementById('p_hora').value,
+                sacerdote: document.getElementById('p_sacerdote').value,
+                categoria: document.getElementById('p_categoria').value,
+                intencion: document.getElementById('p_intencion').value,
+                motivo: document.getElementById('p_motivo').value
+            };
+
+            const result = await fetchAPI('saveParticular', payload);
+            
+            btn.innerHTML = '<i class="fa-solid fa-paper-plane me-2"></i> Registrar Misa';
+            btn.disabled = false;
+
+            if(result) {
+                Swal.fire({
+                    icon: 'success', title: 'Misa Particular Registrada',
+                    timer: 2000, showConfirmButton: false
+                });
+                document.getElementById('formParticular').reset();
+                llenarSacerdotes(); // Recuperar default
+                await refrescarCalendario();
+            }
+        }
+
+        // 6. Calendario Dinámico e Interactivo (FullCalendar)
+        function initCalendar() {
+            const calendarEl = document.getElementById('calendar');
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'es',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,listWeek'
+                },
+                events: mapearEventos(),
+                eventClick: function(info) {
+                    abrirModalDia(info.event.startStr);
+                }
+            });
+            calendar.render();
+        }
+
+        function mapearEventos() {
+            // Agrupamos por fecha para no saturar el calendario visualmente
+            let resumen = {};
+            localData.intenciones.forEach(int => {
+                let clave = `${int.fechaMisa}_${int.tipo}`;
+                if(!resumen[clave]) {
+                    resumen[clave] = { fecha: int.fechaMisa, tipo: int.tipo, cantidad: 0 };
+                }
+                resumen[clave].cantidad++;
+            });
+
+            return Object.values(resumen).map(r => ({
+                title: `${r.cantidad} ${r.tipo === 'Comunitaria' ? 'Comunitarias' : 'Particulares'}`,
+                start: r.fecha,
+                classNames: [r.tipo === 'Comunitaria' ? 'event-comunitaria' : 'event-particular']
+            }));
+        }
+
+        async function refrescarCalendario() {
+            await cargarDatosIniciales();
+            calendar.removeAllEvents();
+            calendar.addEventSource(mapearEventos());
+        }
+
+        // 7. Visualización y Edición (Modal de Día) - Perfecto para las secretarias
+        function abrirModalDia(fecha) {
+            const diaIntenciones = localData.intenciones.filter(i => i.fechaMisa === fecha);
+            const body = document.getElementById('diaModalBody');
+            document.getElementById('diaModalTitle').innerText = `Misales del: ${fecha}`;
+            
+            if(diaIntenciones.length === 0) {
+                body.innerHTML = '<p class="text-muted">No hay intenciones registradas.</p>';
+            } else {
+                let html = '';
+                // Agrupar por Horario y Tipo
+                let agrupado = {};
+                diaIntenciones.forEach(int => {
+                    let key = `${int.horaMisa} - ${int.tipo}`;
+                    if(!agrupado[key]) agrupado[key] =[];
+                    agrupado[key].push(int);
+                });
+
+                for(let grupo in agrupado) {
+                    html += `<div class="mb-4">
+                                <h6 class="fw-bold bg-light p-2 rounded border-start border-4 border-primary">${grupo}</h6>
+                                <ul class="list-group list-group-flush">`;
+                    agrupado[grupo].forEach(int => {
+                        html += `
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <div>
+                                <strong>${int.intencion}</strong> 
+                                <span class="badge bg-secondary ms-2">${int.categoria}</span>
+                                ${int.motivo ? `<br><small class="text-muted">${int.motivo}</small>` : ''}
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary" onclick="editarIntencion('${int.id}', '${int.intencion}', '${int.categoria}')">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                        </li>`;
+                    });
+                    html += `</ul></div>`;
+                }
+                body.innerHTML = html;
+            }
+
+            new bootstrap.Modal(document.getElementById('diaModal')).show();
+        }
+
+        // 8. Edición In-App
+        async function editarIntencion(id, nombreActual, catActual) {
+            const { value: formValues } = await Swal.fire({
+                title: 'Editar Intención',
+                html:
+                    `<input id="swal-input1" class="swal2-input" value="${nombreActual}">
+                     <select id="swal-input2" class="swal2-input">
+                        <option value="Por la Salud" ${catActual=='Por la Salud'?'selected':''}>Por la Salud</option>
+                        <option value="Por la Vida y la Salud" ${catActual=='Por la Vida y la Salud'?'selected':''}>Vida y Salud</option>
+                        <option value="En Acción de Gracias" ${catActual=='En Acción de Gracias'?'selected':''}>Acción de Gracias</option>
+                        <option value="Por el Alma" ${catActual=='Por el Alma'?'selected':''}>Por el Alma</option>
+                     </select>`,
+                focusConfirm: false,
+                showCancelButton: true,
+                preConfirm: () => {
+                    return[ document.getElementById('swal-input1').value, document.getElementById('swal-input2').value ]
+                }
+            });
+
+            if (formValues) {
+                document.getElementById('loader').style.display = 'flex';
+                await fetchAPI('updateIntencion', { id: id, intencion: formValues[0], categoria: formValues[1] });
+                await refrescarCalendario();
+                document.getElementById('loader').style.display = 'none';
+                
+                // Cerrar modal temporal
+                bootstrap.Modal.getInstance(document.getElementById('diaModal')).hide();
+                Swal.fire('¡Actualizado!', 'La intención fue modificada', 'success');
+            }
+        }
+    </script>
+</body>
+</html>
