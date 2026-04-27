@@ -66,15 +66,16 @@
         .modal-custom .modal-header { border-bottom: none; padding: 24px 24px 10px 24px; }
         .modal-custom .modal-body { padding: 0 24px 24px 24px; }
 
-        /* =========================================
-           NUEVO: DRAG & DROP Y EDICIÓN INLINE
-           ========================================= */
+        /* Colores Específicos para Misa Particular */
+        .bg-purple-light { background-color: #f3e8ff !important; }
+        .text-purple { color: #7e22ce !important; }
+
+        /* DRAG & DROP Y EDICIÓN INLINE (Comunitaria) */
         .mass-header { background-color: var(--primary-light); color: var(--primary); padding: 12px 16px; border-radius: 12px; font-weight: 700; margin-top: 20px; margin-bottom: 15px; }
         .category-wrapper { background: #fff; border: 1px solid #f1f5f9; border-radius: 12px; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.01); overflow: hidden; }
         .category-header { background: #f8fafc; padding: 10px 15px; font-size: 0.9rem; font-weight: 600; color: #475569; border-bottom: 1px solid #f1f5f9; }
         
         .sortable-list { min-height: 40px; list-style: none; padding: 5px; margin: 0; }
-        /* Zona para soltar cuando está vacía */
         .sortable-list:empty::after { content: 'Arrastra intenciones aquí'; display: block; text-align: center; color: #cbd5e1; font-size: 0.85rem; padding: 15px 0; font-style: italic; }
 
         .intention-item { display: flex; align-items: center; background: white; margin: 4px; padding: 8px 12px; border-radius: 8px; border: 1px solid transparent; transition: all 0.2s; }
@@ -82,15 +83,13 @@
         .drag-handle { color: #cbd5e1; cursor: grab; padding-right: 10px; font-size: 1.1rem; }
         .drag-handle:active { cursor: grabbing; }
 
-        /* Estilos del Input Inline */
         .inline-input { flex-grow: 1; border: 1px solid transparent; background: transparent; font-weight: 500; color: var(--text-main); font-family: 'Poppins', sans-serif; font-size: 0.95rem; padding: 4px 8px; outline: none; border-radius: 6px; transition: all 0.2s; }
         .inline-input.editing { background: white; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
         
         .action-btn { background: transparent; border: none; color: #94a3b8; transition: 0.2s; padding: 4px 8px; border-radius: 6px; }
         .action-btn:hover { background: #e2e8f0; color: var(--primary); }
-        .action-btn.saving { color: #10b981; } /* Verde para guardar */
+        .action-btn.saving { color: #10b981; } 
 
-        /* Fantasma al arrastrar */
         .sortable-ghost { opacity: 0.4; background-color: #f1f5f9; border: 1px dashed #cbd5e1; }
 
         #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
@@ -210,19 +209,55 @@
         </div>
     </div>
 
-    <!-- MODAL DETALLE DEL DÍA CON ARRASTRAR Y SOLTAR -->
+    <!-- MODAL 1: MISA COMUNITARIA (Con Drag and Drop) -->
     <div class="modal fade modal-custom" id="diaModal" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header d-flex justify-content-between align-items-center">
                     <div>
-                        <h5 class="modal-title fw-bold text-dark mb-0" id="diaModalTitle">Misales</h5>
+                        <h5 class="modal-title fw-bold text-dark mb-0" id="diaModalTitle">Misas Comunitarias</h5>
                         <p class="text-muted small mb-0" id="diaModalSubtitle">Arrastra para organizar. Clic en lápiz para editar texto.</p>
                     </div>
                     <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body" id="diaModalBody">
                     <!-- Contenido inyectado por JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: NUEVO - MISA PARTICULAR (Tarjeta Detallada) -->
+    <div class="modal fade modal-custom" id="particularModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0 d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="badge bg-purple-light text-purple mb-3 px-3 py-2 rounded-pill fw-semibold" style="font-size: 0.85rem;" id="partCategoria">Categoría</span>
+                        <h4 class="fw-bold text-dark mb-1" id="partIntencion">Nombre de la intención</h4>
+                        <p class="text-muted small fw-medium mb-0" id="partFechaHora">Fecha - Hora</p>
+                    </div>
+                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body pt-4">
+                    <div class="p-4 bg-light rounded-4 border mb-4">
+                        <p class="text-muted small mb-2 fw-semibold"><i class="fa-solid fa-circle-info me-2"></i>Motivo de la intención</p>
+                        <p class="mb-0 text-dark" id="partMotivo" style="line-height: 1.6;">...</p>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="bg-white border rounded-circle d-flex justify-content-center align-items-center me-3 shadow-sm" style="width: 45px; height: 45px;">
+                            <i class="fa-solid fa-user-tie" style="color: var(--primary);"></i>
+                        </div>
+                        <div>
+                            <p class="text-muted small mb-0 fw-semibold">Sacerdote Asignado</p>
+                            <p class="mb-0 fw-bold text-dark" id="partSacerdote">Padre</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0 pb-4 px-4">
+                    <button class="btn btn-outline-primary w-100 py-2 rounded-3 fw-semibold" onclick="editarParticular()">
+                        <i class="fa-solid fa-pen me-2"></i>Editar Intención
+                    </button>
                 </div>
             </div>
         </div>
@@ -237,14 +272,8 @@
         let localData = { sacerdotes:[], intenciones:[] };
         let calendar;
 
-        // Configuración Toast (Notificaciones discretas para arrastrar/soltar)
-        const Toast = Swal.mixin({
-            toast: true, position: "top-end", showConfirmButton: false, timer: 2000, timerProgressBar: true
-        });
-
-        const CATEGORIAS_OFICIALES =[
-            "Por la Salud", "Por la Vida y la Salud", "En Acción de Gracias", "Por el Alma"
-        ];
+        const Toast = Swal.mixin({ toast: true, position: "top-end", showConfirmButton: false, timer: 2000, timerProgressBar: true });
+        const CATEGORIAS_OFICIALES =["Por la Salud", "Por la Vida y la Salud", "En Acción de Gracias", "Por el Alma"];
 
         document.addEventListener('DOMContentLoaded', async () => {
             await cargarDatosIniciales();
@@ -253,7 +282,6 @@
             document.getElementById('loader').style.display = 'none';
         });
 
-        // 1. Fetch API
         async function fetchAPI(action, data = {}) {
             try {
                 const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action, data }) });
@@ -293,13 +321,22 @@
         }
 
         // ==========================================
-        //  MODAL: AGRUPACIÓN, DRAG & DROP Y EDICIÓN
+        //  CONTROLADOR DE MODALES (Comunitaria vs Particular)
         // ==========================================
-        function abrirModalDia(fecha) {
-            const diaIntenciones = localData.intenciones.filter(i => i.fechaMisa === fecha);
+        function abrirModal(fecha, tipo, hora) {
+            if (tipo === 'Comunitaria') {
+                abrirModalComunitaria(fecha);
+            } else {
+                abrirModalParticular(fecha, hora);
+            }
+        }
+
+        // 1. MODAL COMUNITARIA (Con el Drag and drop)
+        function abrirModalComunitaria(fecha) {
+            const diaIntenciones = localData.intenciones.filter(i => i.fechaMisa === fecha && i.tipo === 'Comunitaria');
             const body = document.getElementById('diaModalBody');
             
-            document.getElementById('diaModalTitle').innerText = `Misales del ${formatearFechaUX(fecha)}`;
+            document.getElementById('diaModalTitle').innerText = `Comunitarias del ${formatearFechaUX(fecha)}`;
             
             if(diaIntenciones.length === 0) {
                 body.innerHTML = '<p class="text-muted mt-3">No hay intenciones registradas.</p>';
@@ -307,7 +344,6 @@
                 return;
             }
 
-            // Agrupar primero por Misa (Hora + Tipo)
             let misas = {};
             diaIntenciones.forEach(int => {
                 let misaKey = `${int.horaMisa} - ${int.tipo}`;
@@ -318,33 +354,24 @@
             let html = '';
             let misaIndex = 0;
 
-            // Recorrer cada misa
             for(let misaKey in misas) {
                 html += `<div class="mass-header">${misaKey}</div>`;
-                
-                // Dentro de la misa, crear los bloques por Categoría (Forzamos las 4 para que existan zonas de soltar)
                 CATEGORIAS_OFICIALES.forEach(cat => {
                     let intencionesCategoria = misas[misaKey].filter(i => i.categoria === cat);
-                    
                     html += `
                     <div class="category-wrapper">
                         <div class="category-header">${cat} <span class="badge bg-secondary ms-2 rounded-pill">${intencionesCategoria.length}</span></div>
                         <ul class="sortable-list" data-categoria="${cat}" data-grupo="misa-${misaIndex}">
                     `;
-                    
-                    // Ítems de la categoría
                     intencionesCategoria.forEach(int => {
                         html += `
                         <li class="intention-item" data-id="${int.id}">
                             <i class="fa-solid fa-grip-vertical drag-handle" title="Arrastrar"></i>
                             <input type="text" class="inline-input" value="${int.intencion.replace(/"/g, '&quot;')}" readonly onkeydown="checkEnter(event, this)">
                             ${int.motivo ? `<i class="fa-solid fa-comment-dots text-muted me-2" title="${int.motivo.replace(/"/g, '&quot;')}"></i>` : ''}
-                            <button class="action-btn ms-2" onclick="toggleEdit(this, '${int.id}')" title="Editar">
-                                <i class="fa-solid fa-pen"></i>
-                            </button>
+                            <button class="action-btn ms-2" onclick="toggleEdit(this, '${int.id}')" title="Editar"><i class="fa-solid fa-pen"></i></button>
                         </li>`;
                     });
-
                     html += `</ul></div>`;
                 });
                 misaIndex++;
@@ -352,32 +379,59 @@
 
             body.innerHTML = html;
             new bootstrap.Modal(document.getElementById('diaModal')).show();
-            
-            // Inicializar SortableJS (Drag & Drop) después de inyectar el HTML
             initSortable();
         }
 
+        // 2. MODAL PARTICULAR (Diseño Nuevo de Tarjeta)
+        let currentParticularId = '';
+        let currentParticularIntencion = '';
+        let currentParticularCategoria = '';
+
+        function abrirModalParticular(fecha, hora) {
+            const intencionPart = localData.intenciones.find(i => i.fechaMisa === fecha && i.tipo === 'Particular' && i.horaMisa === hora);
+            
+            if(!intencionPart) {
+                Swal.fire('Atención', 'No se encontró el detalle de esta misa.', 'warning');
+                return;
+            }
+
+            currentParticularId = intencionPart.id;
+            currentParticularIntencion = intencionPart.intencion;
+            currentParticularCategoria = intencionPart.categoria;
+
+            document.getElementById('partCategoria').innerText = intencionPart.categoria;
+            document.getElementById('partIntencion').innerText = intencionPart.intencion;
+            document.getElementById('partFechaHora').innerText = `${formatearFechaUX(fecha)} - ${hora}`;
+            
+            // Si no hay motivo, mostramos un texto tenue
+            if (intencionPart.motivo) {
+                document.getElementById('partMotivo').innerHTML = intencionPart.motivo;
+                document.getElementById('partMotivo').classList.remove('opacity-50', 'fst-italic');
+            } else {
+                document.getElementById('partMotivo').innerHTML = "Sin motivo específico registrado.";
+                document.getElementById('partMotivo').classList.add('opacity-50', 'fst-italic');
+            }
+            
+            document.getElementById('partSacerdote').innerText = intencionPart.sacerdote || 'No asignado';
+
+            new bootstrap.Modal(document.getElementById('particularModal')).show();
+        }
+
+        // ==========================================
+        //  LÓGICAS DE EDICIÓN
+        // ==========================================
+        // Edición Drag&Drop y Lápiz (Comunitaria)
         function initSortable() {
             const listas = document.querySelectorAll('.sortable-list');
             listas.forEach(lista => {
                 let grupoMisa = lista.getAttribute('data-grupo');
                 new Sortable(lista, {
-                    group: grupoMisa, // Solo permite arrastrar entre listas de la MISMA misa
-                    animation: 150,
-                    handle: '.drag-handle',
-                    ghostClass: 'sortable-ghost',
+                    group: grupoMisa, animation: 150, handle: '.drag-handle', ghostClass: 'sortable-ghost',
                     onEnd: function (evt) {
-                        let item = evt.item;
-                        let nuevaCat = evt.to.getAttribute('data-categoria');
-                        let catVieja = evt.from.getAttribute('data-categoria');
-                        
-                        // Si lo soltó en una categoría diferente, guardamos
+                        let item = evt.item; let nuevaCat = evt.to.getAttribute('data-categoria'); let catVieja = evt.from.getAttribute('data-categoria');
                         if (nuevaCat !== catVieja) {
-                            let id = item.getAttribute('data-id');
-                            let texto = item.querySelector('.inline-input').value;
+                            let id = item.getAttribute('data-id'); let texto = item.querySelector('.inline-input').value;
                             guardarCambioEnFondo(id, texto, nuevaCat);
-                            
-                            // Actualizar contadores visuales de las insignias (badges)
                             actualizarContadores(evt.to, evt.from);
                         }
                     }
@@ -385,56 +439,60 @@
             });
         }
 
-        // EDICIÓN INLINE (Lápiz)
         function toggleEdit(btn, id) {
-            let li = btn.closest('li');
-            let input = li.querySelector('.inline-input');
-            let icon = btn.querySelector('i');
-            
+            let li = btn.closest('li'); let input = li.querySelector('.inline-input'); let icon = btn.querySelector('i');
             if (input.hasAttribute('readonly')) {
-                // Entrar a modo edición
-                input.removeAttribute('readonly');
-                input.focus();
-                // Colocar cursor al final del texto
+                input.removeAttribute('readonly'); input.focus();
                 let val = input.value; input.value = ''; input.value = val;
-                
-                input.classList.add('editing');
-                icon.classList.replace('fa-pen', 'fa-check');
-                btn.classList.add('saving');
-            } else {
-                // Modo Guardar (Clic en Check)
-                finalizarEdicion(input, btn, id);
-            }
+                input.classList.add('editing'); icon.classList.replace('fa-pen', 'fa-check'); btn.classList.add('saving');
+            } else { finalizarEdicion(input, btn, id); }
         }
 
-        // Si presiona ENTER en el input
         function checkEnter(event, input) {
             if (event.key === 'Enter') {
-                event.preventDefault();
-                let btn = input.parentElement.querySelector('.action-btn');
-                let id = input.parentElement.getAttribute('data-id');
+                event.preventDefault(); let btn = input.parentElement.querySelector('.action-btn'); let id = input.parentElement.getAttribute('data-id');
                 finalizarEdicion(input, btn, id);
             }
         }
 
         function finalizarEdicion(input, btn, id) {
-            input.setAttribute('readonly', true);
-            input.classList.remove('editing');
-            let icon = btn.querySelector('i');
-            icon.classList.replace('fa-check', 'fa-pen');
-            btn.classList.remove('saving');
-            
-            let nuevoTexto = input.value;
-            let categoriaActual = btn.closest('ul').getAttribute('data-categoria');
-            
+            input.setAttribute('readonly', true); input.classList.remove('editing');
+            let icon = btn.querySelector('i'); icon.classList.replace('fa-check', 'fa-pen'); btn.classList.remove('saving');
+            let nuevoTexto = input.value; let categoriaActual = btn.closest('ul').getAttribute('data-categoria');
             guardarCambioEnFondo(id, nuevoTexto, categoriaActual);
         }
 
-        // Función central para guardar cambios (DragDrop y Edición de Texto) sin bloquear la pantalla
+        // Edición desde el Modal Particular
+        async function editarParticular() {
+            const { value: formValues } = await Swal.fire({
+                title: 'Editar Misa Particular',
+                html:
+                    `<input id="swal-input1" class="swal2-input mb-3" style="width: 85%;" value="${currentParticularIntencion.replace(/"/g, '&quot;')}">
+                     <select id="swal-input2" class="swal2-input" style="width: 85%;">
+                        <option value="Por la Salud" ${currentParticularCategoria=='Por la Salud'?'selected':''}>Por la Salud</option>
+                        <option value="Por la Vida y la Salud" ${currentParticularCategoria=='Por la Vida y la Salud'?'selected':''}>Vida y Salud</option>
+                        <option value="En Acción de Gracias" ${currentParticularCategoria=='En Acción de Gracias'?'selected':''}>Acción de Gracias</option>
+                        <option value="Por el Alma" ${currentParticularCategoria=='Por el Alma'?'selected':''}>Por el Alma</option>
+                     </select>`,
+                focusConfirm: false,
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar',
+                preConfirm: () => {
+                    return[document.getElementById('swal-input1').value, document.getElementById('swal-input2').value]
+                }
+            });
+
+            if (formValues) {
+                // Cerramos el modal particular temporalmente para que se vea el loader visual de guardado
+                bootstrap.Modal.getInstance(document.getElementById('particularModal')).hide();
+                await guardarCambioEnFondo(currentParticularId, formValues[0], formValues[1]);
+            }
+        }
+
+        // Función central para guardar cambios sin bloquear
         async function guardarCambioEnFondo(id, nuevoTexto, nuevaCategoria) {
-            Toast.fire({ icon: 'info', title: 'Guardando...', timer: false }); // Toast infinito hasta que acabe
-            
-            // Actualizar arreglo localData primero para inmediatez (Optimistic UI)
+            Toast.fire({ icon: 'info', title: 'Guardando...', timer: false }); 
             let index = localData.intenciones.findIndex(i => i.id === id);
             if (index !== -1) {
                 localData.intenciones[index].intencion = nuevoTexto;
@@ -445,19 +503,15 @@
             
             if (result) {
                 Toast.fire({ icon: 'success', title: 'Cambio guardado' });
-                // Refrescamos paneles sin recargar BD
                 refrescarVistasLocales(); 
             } else {
                 Toast.fire({ icon: 'error', title: 'Error al guardar' });
             }
         }
 
-        // Función visual para actualizar los números de los bloques
         function actualizarContadores(ulTo, ulFrom) {
-            let headerTo = ulTo.parentElement.querySelector('.badge');
-            let headerFrom = ulFrom.parentElement.querySelector('.badge');
-            headerTo.innerText = parseInt(headerTo.innerText) + 1;
-            headerFrom.innerText = parseInt(headerFrom.innerText) - 1;
+            let headerTo = ulTo.parentElement.querySelector('.badge'); let headerFrom = ulFrom.parentElement.querySelector('.badge');
+            headerTo.innerText = parseInt(headerTo.innerText) + 1; headerFrom.innerText = parseInt(headerFrom.innerText) - 1;
         }
 
         // ==========================================
@@ -486,7 +540,7 @@
                 });
                 Object.values(resumen).forEach(r => {
                     html += `
-                    <div class="event-card mb-2" onclick="abrirModalDia('${r.fecha}')">
+                    <div class="event-card mb-2" onclick="abrirModal('${r.fecha}', '${r.tipo}', '${r.hora}')">
                         <div class="d-flex align-items-center mb-2"><span class="dot ${r.tipo==='Comunitaria'?'dot-comunitaria':'dot-particular'} me-2"></span>
                         <span class="text-muted small fw-medium">${formatearFechaUX(r.fecha)} - ${r.hora}</span></div>
                         <h6 class="fw-bold mb-1">${r.tipo==='Comunitaria'?'Misa Comunitaria':'Misa Particular'}</h6>
@@ -496,7 +550,7 @@
             } else {
                 eventosFuturos.forEach(int => {
                     html += `
-                    <div class="event-card mb-2" onclick="abrirModalDia('${int.fechaMisa}')">
+                    <div class="event-card mb-2" onclick="abrirModal('${int.fechaMisa}', '${int.tipo}', '${int.horaMisa}')">
                         <div class="d-flex align-items-center mb-2"><span class="dot ${int.tipo==='Comunitaria'?'dot-comunitaria':'dot-particular'} me-2"></span>
                         <span class="text-muted small fw-medium">${formatearFechaUX(int.fechaMisa)} - ${int.horaMisa}</span></div>
                         <h6 class="fw-bold mb-1">${int.intencion}</h6>
@@ -513,7 +567,11 @@
                 headerToolbar: { left: 'title prev,next', center: '', right: 'timeGridDay,timeGridWeek,dayGridMonth' },
                 buttonText: { day: 'Día', week: 'Semana', month: 'Mes' },
                 events: mapearEventos(),
-                eventClick: function(info) { abrirModalDia(info.event.startStr); }
+                eventClick: function(info) { 
+                    // EXTRAER TIPO Y HORA Y ABRIR EL MODAL CORRESPONDIENTE
+                    let props = info.event.extendedProps;
+                    abrirModal(info.event.startStr, props.tipo, props.hora); 
+                }
             });
             calendar.render();
         }
@@ -522,40 +580,36 @@
             let resumen = {};
             localData.intenciones.forEach(int => {
                 let clave = `${int.fechaMisa}_${int.tipo}_${int.horaMisa}`;
-                if(!resumen[clave]) resumen[clave] = { fecha: int.fechaMisa, tipo: int.tipo, qty: 0 };
+                if(!resumen[clave]) resumen[clave] = { fecha: int.fechaMisa, tipo: int.tipo, hora: int.horaMisa, qty: 0 };
                 resumen[clave].qty++;
             });
             return Object.values(resumen).map(r => ({
                 title: r.tipo === 'Comunitaria' ? `${r.qty} Comunitarias` : `1 Particular`,
-                start: r.fecha, classNames:[r.tipo === 'Comunitaria' ? 'event-comunitaria' : 'event-particular']
+                start: r.fecha, 
+                extendedProps: { tipo: r.tipo, hora: r.hora }, // Agregamos estas variables al calendario
+                classNames:[r.tipo === 'Comunitaria' ? 'event-comunitaria' : 'event-particular']
             }));
         }
 
-        // Refresca UI tras ediciones arrastradas/escritas sin tener que consultar a Google Sheets
         function refrescarVistasLocales() {
-            calendar.removeAllEvents();
-            calendar.addEventSource(mapearEventos());
-            renderSideList();
+            calendar.removeAllEvents(); calendar.addEventSource(mapearEventos()); renderSideList();
         }
 
         async function refrescarDataTotal() {
-            await cargarDatosIniciales();
-            refrescarVistasLocales();
+            await cargarDatosIniciales(); refrescarVistasLocales();
         }
 
         function formatearFechaUX(fechaStr) {
             const meses =['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-            const partes = fechaStr.split('-');
-            return `${partes[2]} ${meses[parseInt(partes[1])-1]}, ${partes[0]}`;
+            const partes = fechaStr.split('-'); return `${partes[2]} ${meses[parseInt(partes[1])-1]}, ${partes[0]}`;
         }
 
         // ==========================================
-        //  GUARDADOS NUEVOS (Comunitaria y Particular)
+        //  GUARDADOS NUEVOS
         // ==========================================
         async function guardarComunitaria(e) {
             e.preventDefault();
-            const btn = document.getElementById('btnComunitaria');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...'; btn.disabled = true;
+            const btn = document.getElementById('btnComunitaria'); btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...'; btn.disabled = true;
 
             const payload = {
                 fechaMisa: document.getElementById('c_fecha').value, horaMisa: document.getElementById('c_hora').value,
@@ -568,15 +622,13 @@
 
             if(result) {
                 Swal.fire({ icon: 'success', title: 'Completado', text: `${result} intenciones guardadas.`, timer: 2000, showConfirmButton: false });
-                document.getElementById('c_text').value = ''; 
-                await refrescarDataTotal();
+                document.getElementById('c_text').value = ''; await refrescarDataTotal();
             }
         }
 
         async function guardarParticular(e) {
             e.preventDefault();
-            const btn = document.getElementById('btnParticular');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Registrando...'; btn.disabled = true;
+            const btn = document.getElementById('btnParticular'); btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Registrando...'; btn.disabled = true;
 
             const payload = {
                 fechaMisa: document.getElementById('p_fecha').value, horaMisa: document.getElementById('p_hora').value,
@@ -589,8 +641,7 @@
 
             if(result) {
                 Swal.fire({ icon: 'success', title: 'Misa Registrada', timer: 2000, showConfirmButton: false });
-                document.getElementById('formParticular').reset(); llenarSacerdotes(); 
-                await refrescarDataTotal();
+                document.getElementById('formParticular').reset(); llenarSacerdotes(); await refrescarDataTotal();
             }
         }
     </script>
