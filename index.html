@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Intenciones de Misa</title>
     <!-- Fuentes y Estilos -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- FullCalendar -->
@@ -15,61 +15,69 @@
 
     <style>
         :root {
-            --bg-color: #f4f7f6;
+            --bg-color: #f8fafc; /* Fondo más suave y moderno */
             --primary: #4f46e5;
+            --primary-light: #e0e7ff;
             --secondary: #6366f1;
-            --text-main: #1e293b;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
             --card-bg: #ffffff;
+            --border-light: #f1f5f9;
         }
         body {
             font-family: 'Poppins', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
             overflow-x: hidden;
+            background-image: radial-gradient(circle at top left, rgba(79, 70, 229, 0.03), transparent 400px);
         }
+        
+        /* Navbar & Tabs (Manteniendo el diseño original) */
         .navbar-custom {
             background-color: var(--card-bg);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
             padding: 15px 30px;
         }
         .nav-pills .nav-link {
-            color: var(--text-main);
-            border-radius: 10px;
+            color: var(--text-muted);
+            border-radius: 12px;
             margin-right: 10px;
             transition: all 0.3s ease;
+            font-weight: 500;
         }
         .nav-pills .nav-link.active {
             background-color: var(--primary);
-            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+            color: white;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
         }
+
+        /* Formularios y Botones Generales */
         .card-custom {
             background: var(--card-bg);
             border: none;
-            border-radius: 16px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.04);
-            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            padding: 30px;
             animation: fadeIn 0.5s ease;
         }
         .form-control, .form-select {
-            border-radius: 10px;
+            border-radius: 12px;
             border: 1px solid #e2e8f0;
-            padding: 12px 15px;
+            padding: 12px 16px;
             transition: all 0.2s;
+            background-color: #f8fafc;
         }
         .form-control:focus, .form-select:focus {
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+            box-shadow: 0 0 0 3px var(--primary-light);
             border-color: var(--primary);
+            background-color: #fff;
         }
-        .textarea-word {
-            min-height: 200px;
-            line-height: 1.8;
-            font-size: 1.05rem;
-            background-color: #fafafa;
-        }
+        .textarea-word { min-height: 200px; line-height: 1.8; font-size: 1.05rem; }
         .btn-primary-custom {
             background-color: var(--primary);
+            color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             padding: 12px 25px;
             font-weight: 500;
             transition: all 0.3s ease;
@@ -77,27 +85,105 @@
         .btn-primary-custom:hover {
             background-color: var(--secondary);
             transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(79, 70, 229, 0.4);
+            box-shadow: 0 6px 15px rgba(79, 70, 229, 0.3);
+            color: white;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        /* =========================================
+           NUEVO DISEÑO CALENDARIO TIPO IMAGEN
+           ========================================= */
+        
+        /* Lista Lateral (Upcoming Events) */
+        .event-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            transition: transform 0.2s;
+            border: 1px solid #f8fafc;
+            cursor: pointer;
         }
+        .event-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
+        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+        .dot-comunitaria { background-color: #3b82f6; } /* Azul */
+        .dot-particular { background-color: #a855f7; } /* Morado pastel */
+        
+        /* Customización FullCalendar */
+        .calendar-wrapper {
+            background: #fff;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        }
+        .fc .fc-toolbar-title { font-size: 1.4rem; font-weight: 700; color: #1e293b; }
+        
+        /* Botones del header calendario */
+        .fc .fc-button {
+            border-radius: 8px !important;
+            text-transform: capitalize;
+            font-weight: 500;
+            box-shadow: none !important;
+            border: none !important;
+            padding: 8px 16px !important;
+            transition: 0.2s;
+        }
+        .fc .fc-button-primary {
+            background-color: var(--primary-light) !important;
+            color: var(--primary) !important;
+        }
+        .fc .fc-button-primary:hover { background-color: #c7d2fe !important; }
+        .fc .fc-button-primary:not(:disabled).fc-button-active, 
+        .fc .fc-button-primary:active {
+            background-color: var(--primary) !important;
+            color: white !important;
+        }
+        .fc-theme-standard td, .fc-theme-standard th { border-color: var(--border-light); }
+        .fc-theme-standard th { padding: 12px 0; font-weight: 500; color: var(--text-muted); }
+        
+        /* Posición del número de día (Arriba-Izquierda como en la imagen) */
+        .fc .fc-daygrid-day-top { flex-direction: row; justify-content: flex-start; padding: 8px 10px; }
+        .fc-daygrid-day-number { color: #475569; font-weight: 500; font-size: 0.9rem; text-decoration: none; }
+        
+        /* Estilo del día de hoy */
+        .fc .fc-day-today { background-color: transparent !important; }
+        .fc .fc-day-today .fc-daygrid-day-number {
+            background-color: var(--primary);
+            color: white !important;
+            border-radius: 50%;
+            width: 28px; height: 28px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        /* Estilo Eventos (Pasteles sin bordes) */
+        .fc-event { border: none !important; border-radius: 6px !important; padding: 2px 4px; margin-bottom: 2px; font-size: 0.8rem; font-weight: 500; cursor: pointer; }
+        .event-comunitaria { background-color: #e0f2fe !important; color: #0284c7 !important; }
+        .event-particular { background-color: #f3e8ff !important; color: #7e22ce !important; }
+
+        /* =========================================
+           NUEVO DISEÑO MODAL EDICIÓN
+           ========================================= */
+        .modal-custom .modal-content {
+            border: none;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.1);
+        }
+        .modal-custom .modal-header { border-bottom: none; padding: 24px 24px 0 24px; }
+        .modal-custom .modal-body { padding: 24px; }
+        .input-minimalist {
+            background: #f8fafc; border: 1px solid transparent; border-radius: 12px;
+            padding: 14px 16px; font-size: 1rem; color: #1e293b; font-weight: 500;
+        }
+        .input-minimalist:focus { background: #fff; border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); }
+
         /* Loader */
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(255,255,255,0.9); z-index: 9999;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
-        .spinner {
-            width: 50px; height: 50px; border: 5px solid #e2e8f0;
-            border-top: 5px solid var(--primary); border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
+        .spinner { width: 50px; height: 50px; border: 4px solid var(--primary-light); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        .event-comunitaria { background-color: #0d6efd !important; border: none; }
-        .event-particular { background-color: #6f42c1 !important; border: none; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -105,10 +191,10 @@
     <!-- Loader -->
     <div id="loader">
         <div class="spinner"></div>
-        <p class="mt-3 font-weight-bold text-muted">Sincronizando sistema...</p>
+        <p class="mt-3 font-weight-bold" style="color: var(--text-muted);">Sincronizando sistema...</p>
     </div>
 
-    <!-- Navegación Minimalista -->
+    <!-- Navegación -->
     <nav class="navbar-custom d-flex justify-content-between align-items-center mb-4">
         <h4 class="m-0 fw-bold" style="color: var(--primary);">
             <i class="fa-solid fa-church me-2"></i>ParroquiaSys
@@ -119,7 +205,7 @@
         <div class="row">
             <!-- Sidebar / Tabs -->
             <div class="col-md-3 col-lg-2 mb-4">
-                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
                     <button class="nav-link active mb-2 text-start" data-bs-toggle="pill" data-bs-target="#tab-calendar">
                         <i class="fa-regular fa-calendar-days me-2"></i> Calendario
                     </button>
@@ -136,40 +222,66 @@
             <div class="col-md-9 col-lg-10">
                 <div class="tab-content" id="v-pills-tabContent">
                     
-                    <!-- TAB CALENDARIO -->
+                    <!-- =========================================
+                         NUEVO TAB CALENDARIO (ESTILO UI AESTHETIC)
+                         ========================================= -->
                     <div class="tab-pane fade show active" id="tab-calendar">
-                        <div class="card-custom">
-                            <h5 class="fw-bold mb-4">Calendario de Misas</h5>
-                            <div id="calendar"></div>
+                        <div class="row">
+                            <!-- Columna Izquierda: Lista de Misas/Intenciones -->
+                            <div class="col-xl-4 col-lg-5 mb-4 pr-lg-4">
+                                <div class="d-flex justify-content-between align-items-end mb-4">
+                                    <div>
+                                        <h4 class="fw-bold mb-1">Listado de Misas</h4>
+                                        <p class="text-muted small mb-0">No pierdas el cronograma</p>
+                                    </div>
+                                    <!-- Toggle Diseño UX -->
+                                    <div class="bg-white rounded-3 shadow-sm p-1 border">
+                                        <select id="vistaLista" class="form-select form-select-sm border-0 shadow-none fw-semibold" style="background-color: transparent; color: var(--primary);" onchange="renderSideList()">
+                                            <option value="resumen">Por Misas</option>
+                                            <option value="detalle">Por Intención</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <!-- Contenedor de las Cards -->
+                                <div id="sideEventsList" class="d-flex flex-column gap-1" style="max-height: 75vh; overflow-y: auto; padding-right: 5px;">
+                                    <!-- Renderizado por JS -->
+                                </div>
+                            </div>
+
+                            <!-- Columna Derecha: FullCalendar -->
+                            <div class="col-xl-8 col-lg-7">
+                                <div class="calendar-wrapper">
+                                    <div id="calendar"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- TAB COMUNITARIA -->
+                    <!-- TAB COMUNITARIA (Se mantiene igual, solo aplican estilos globales) -->
                     <div class="tab-pane fade" id="tab-comunitaria">
-                        <div class="card-custom max-w-lg mx-auto" style="max-width: 800px;">
+                        <div class="card-custom mx-auto" style="max-width: 800px;">
                             <h5 class="fw-bold mb-3">Registrar Intenciones Comunitarias</h5>
-                            <p class="text-muted small mb-4">Escribe una intención y presiona ENTER para la siguiente. Se guardarán individualmente y de forma instantánea.</p>
+                            <p class="text-muted small mb-4">Escribe una intención y presiona ENTER para la siguiente. Se guardan individualmente.</p>
                             
                             <form id="formComunitaria" onsubmit="guardarComunitaria(event)">
                                 <div class="row g-3 mb-3">
                                     <div class="col-md-4">
-                                        <label class="form-label text-muted small">Fecha de Misa</label>
+                                        <label class="form-label text-muted fw-semibold small">Fecha de Misa</label>
                                         <input type="date" class="form-control" id="c_fecha" required onchange="actualizarHorariosComunitaria()">
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="form-label text-muted small">Horario</label>
+                                        <label class="form-label text-muted fw-semibold small">Horario</label>
                                         <select class="form-select" id="c_hora" required>
                                             <option value="6:00 PM">6:00 PM</option>
                                         </select>
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="form-label text-muted small">Sacerdote</label>
+                                        <label class="form-label text-muted fw-semibold small">Sacerdote</label>
                                         <select class="form-select select-sacerdote" id="c_sacerdote" required></select>
                                     </div>
                                 </div>
-                                
                                 <div class="mb-3">
-                                    <label class="form-label text-muted small">Categoría</label>
+                                    <label class="form-label text-muted fw-semibold small">Categoría</label>
                                     <select class="form-select" id="c_categoria" required>
                                         <option value="Por la Salud">Por la Salud</option>
                                         <option value="Por la Vida y la Salud">Por la Vida y la Salud</option>
@@ -177,20 +289,18 @@
                                         <option value="Por el Alma">Por el Alma</option>
                                     </select>
                                 </div>
-
                                 <div class="mb-4">
-                                    <label class="form-label text-muted small">Listado de Intenciones (Estilo Word)</label>
-                                    <textarea class="form-control textarea-word" id="c_text" placeholder="Ej:&#10;Juan Pérez&#10;María Gómez&#10;Familia Rojas" required></textarea>
+                                    <label class="form-label text-muted fw-semibold small">Listado de Intenciones (Estilo Word)</label>
+                                    <textarea class="form-control textarea-word" id="c_text" placeholder="Ej:&#10;Juan Pérez&#10;María Gómez" required></textarea>
                                 </div>
-
-                                <button type="submit" class="btn btn-primary-custom w-100" id="btnComunitaria">
+                                <button type="submit" class="btn btn-primary-custom w-100 py-3" id="btnComunitaria">
                                     <i class="fa-solid fa-floppy-disk me-2"></i> Guardar Lista
                                 </button>
                             </form>
                         </div>
                     </div>
 
-                    <!-- TAB PARTICULAR -->
+                    <!-- TAB PARTICULAR (Se mantiene igual) -->
                     <div class="tab-pane fade" id="tab-particular">
                         <div class="card-custom mx-auto" style="max-width: 600px;">
                             <h5 class="fw-bold mb-4">Registrar Misa Particular</h5>
@@ -198,11 +308,11 @@
                             <form id="formParticular" onsubmit="guardarParticular(event)">
                                 <div class="row g-3 mb-3">
                                     <div class="col-md-6">
-                                        <label class="form-label text-muted small">Fecha</label>
+                                        <label class="form-label text-muted fw-semibold small">Fecha</label>
                                         <input type="date" class="form-control" id="p_fecha" required>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label text-muted small">Horario</label>
+                                        <label class="form-label text-muted fw-semibold small">Horario</label>
                                         <select class="form-select" id="p_hora" required>
                                             <option value="4:45 PM">4:45 PM</option>
                                             <option value="5:00 PM">5:00 PM</option>
@@ -210,14 +320,12 @@
                                         </select>
                                     </div>
                                 </div>
-
                                 <div class="mb-3">
-                                    <label class="form-label text-muted small">Sacerdote</label>
+                                    <label class="form-label text-muted fw-semibold small">Sacerdote</label>
                                     <select class="form-select select-sacerdote" id="p_sacerdote" required></select>
                                 </div>
-
                                 <div class="mb-3">
-                                    <label class="form-label text-muted small">Categoría</label>
+                                    <label class="form-label text-muted fw-semibold small">Categoría</label>
                                     <select class="form-select" id="p_categoria" required>
                                         <option value="Por la Salud">Por la Salud</option>
                                         <option value="Por la Vida y la Salud">Por la Vida y la Salud</option>
@@ -225,18 +333,15 @@
                                         <option value="Por el Alma">Por el Alma</option>
                                     </select>
                                 </div>
-
                                 <div class="mb-3">
-                                    <label class="form-label text-muted small">Intención (Para quién)</label>
+                                    <label class="form-label text-muted fw-semibold small">Intención (Para quién)</label>
                                     <input type="text" class="form-control" id="p_intencion" placeholder="Nombre completo" required>
                                 </div>
-
                                 <div class="mb-4">
-                                    <label class="form-label text-muted small">Motivo (Opcional)</label>
+                                    <label class="form-label text-muted fw-semibold small">Motivo (Opcional)</label>
                                     <textarea class="form-control" id="p_motivo" rows="2" placeholder="Motivo de la intención"></textarea>
                                 </div>
-
-                                <button type="submit" class="btn btn-primary-custom w-100" id="btnParticular">
+                                <button type="submit" class="btn btn-primary-custom w-100 py-3" id="btnParticular">
                                     <i class="fa-solid fa-paper-plane me-2"></i> Registrar Misa
                                 </button>
                             </form>
@@ -248,16 +353,57 @@
         </div>
     </div>
 
-    <!-- Modal Ver/Editar Día -->
-    <div class="modal fade" id="diaModal" tabindex="-1">
+    <!-- =========================================
+         MODAL DETALLE DEL DÍA (Minimalista)
+         ========================================= -->
+    <div class="modal fade modal-custom" id="diaModal" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-scrollable">
-            <div class="modal-content border-0" style="border-radius: 16px;">
-                <div class="modal-header border-0 bg-light">
-                    <h5 class="modal-title fw-bold" id="diaModalTitle">Intenciones del Día</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <div class="modal-content">
+                <div class="modal-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="modal-title fw-bold text-dark mb-0" id="diaModalTitle">Misales</h5>
+                        <p class="text-muted small mb-0" id="diaModalSubtitle">Revisión de intenciones</p>
+                    </div>
+                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body" id="diaModalBody">
-                    <!-- Contenido dinámico inyectado por JS -->
+                    <!-- Contenido inyectado por JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================
+         NUEVO MODAL EDICIÓN (Aesthetic)
+         ========================================= -->
+    <div class="modal fade modal-custom" id="editIntencionModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="modal-title fw-bold text-dark">Editar Intención</h5>
+                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body pt-0">
+                    <input type="hidden" id="edit_id">
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-semibold">Intención registrada</label>
+                        <input type="text" class="form-control input-minimalist w-100" id="edit_nombre" autocomplete="off">
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label text-muted small fw-semibold">Clasificación</label>
+                        <select class="form-select input-minimalist w-100" id="edit_categoria">
+                            <option value="Por la Salud">Por la Salud</option>
+                            <option value="Por la Vida y la Salud">Por la Vida y la Salud</option>
+                            <option value="En Acción de Gracias">En Acción de Gracias</option>
+                            <option value="Por el Alma">Por el Alma</option>
+                        </select>
+                    </div>
+
+                    <button class="btn btn-primary-custom w-100 py-3" id="btnGuardarEdicion" onclick="guardarEdicion()">
+                        Guardar Cambios
+                    </button>
                 </div>
             </div>
         </div>
@@ -267,38 +413,33 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // ==========================================
-        //  UX/UI & LOGIC BY EXPERT PROGRAMMER
-        // ==========================================
-
-        const API_URL = "https://script.google.com/macros/s/AKfycbyKMnK7kV1yjGzk6DexZxkw65mx26SohJ1R0JCMUVqo8t4RRfLEaC9UkKIWtWyCkmGS/exec"; // ¡PEGAR LA URL DE APPSCRIPT AQUÍ!
-        
+        const API_URL = "https://script.google.com/macros/s/AKfycbyKMnK7kV1yjGzk6DexZxkw65mx26SohJ1R0JCMUVqo8t4RRfLEaC9UkKIWtWyCkmGS/exec"; // REEMPLAZA CON TU ENLACE
         let localData = { sacerdotes: [], intenciones:[] };
         let calendar;
 
         document.addEventListener('DOMContentLoaded', async () => {
             await cargarDatosIniciales();
             initCalendar();
+            renderSideList(); // Renderizar panel izquierdo
             document.getElementById('loader').style.display = 'none';
         });
 
-        // 1. Fetch API Centralizado (Optimizado para evitar bloqueos)
+        // 1. Fetch API Centralizado
         async function fetchAPI(action, data = {}) {
             try {
                 const response = await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action, data })
+                    method: 'POST', body: JSON.stringify({ action, data })
                 });
                 const result = await response.json();
                 if(result.status === 'error') throw new Error(result.message);
                 return result.data;
             } catch (error) {
-                Swal.fire('Error de Conexión', error.message, 'error');
+                Swal.fire('Error', error.message, 'error');
                 return null;
             }
         }
 
-        // 2. Cargar Datos y Llenar Selects
+        // 2. Cargar Datos
         async function cargarDatosIniciales() {
             const data = await fetchAPI('getInitialData');
             if(data) {
@@ -311,176 +452,185 @@
             const selects = document.querySelectorAll('.select-sacerdote');
             let optionsHTML = '';
             let defaultId = '';
-            
             localData.sacerdotes.forEach(s => {
                 let isDefecto = s.esDefecto === true || s.esDefecto === 'TRUE';
                 if(isDefecto) defaultId = s.nombre;
                 optionsHTML += `<option value="${s.nombre}">${s.nombre} ${isDefecto ? '(Predeterminado)' : ''}</option>`;
             });
-
-            selects.forEach(select => {
-                select.innerHTML = optionsHTML;
-                if(defaultId) select.value = defaultId;
-            });
+            selects.forEach(select => { select.innerHTML = optionsHTML; if(defaultId) select.value = defaultId; });
         }
 
-        // 3. Lógica Especial de Horarios (UX: Domingos vs Lunes a Sábado)
         function actualizarHorariosComunitaria() {
             const fechaInput = document.getElementById('c_fecha').value;
             if(!fechaInput) return;
-            
-            // Usamos split para evitar problemas de Timezone de Javascript
             const partes = fechaInput.split('-');
             const date = new Date(partes[0], partes[1] - 1, partes[2]);
             const selectHora = document.getElementById('c_hora');
             
-            if (date.getDay() === 0) { // 0 es Domingo
-                selectHora.innerHTML = `
-                    <option value="9:00 AM">9:00 AM</option>
-                    <option value="12:00 PM">12:00 PM</option>
-                    <option value="6:00 PM">6:00 PM</option>`;
-            } else { // Lunes a Sábado
+            if (date.getDay() === 0) { // Domingo
+                selectHora.innerHTML = `<option value="9:00 AM">9:00 AM</option><option value="12:00 PM">12:00 PM</option><option value="6:00 PM">6:00 PM</option>`;
+            } else { 
                 selectHora.innerHTML = `<option value="6:00 PM">6:00 PM</option>`;
             }
         }
 
-        // 4. Guardado "Estilo Word" (Comunitarias)
-        async function guardarComunitaria(e) {
-            e.preventDefault();
-            const btn = document.getElementById('btnComunitaria');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
-            btn.disabled = true;
-
-            const payload = {
-                fechaMisa: document.getElementById('c_fecha').value,
-                horaMisa: document.getElementById('c_hora').value,
-                sacerdote: document.getElementById('c_sacerdote').value,
-                categoria: document.getElementById('c_categoria').value,
-                textoIntenciones: document.getElementById('c_text').value
-            };
-
-            const result = await fetchAPI('saveComunitarias', payload);
+        // ==========================================
+        //  NUEVO: PANEL LATERAL DE MISAS (IMAGEN UI)
+        // ==========================================
+        function renderSideList() {
+            const modo = document.getElementById('vistaLista').value;
+            const container = document.getElementById('sideEventsList');
             
-            btn.innerHTML = '<i class="fa-solid fa-floppy-disk me-2"></i> Guardar Lista';
-            btn.disabled = false;
+            // Filtrar desde hoy en adelante
+            let hoy = new Date(); hoy.setHours(0,0,0,0);
+            let eventosFuturos = localData.intenciones.filter(i => {
+                let partes = i.fechaMisa.split('-');
+                let fMisa = new Date(partes[0], partes[1] - 1, partes[2]);
+                return fMisa >= hoy;
+            });
+            
+            // Ordenar por fecha y hora
+            eventosFuturos.sort((a,b) => new Date(a.fechaMisa) - new Date(b.fechaMisa));
 
-            if(result) {
-                Swal.fire({
-                    icon: 'success', title: '¡Éxito!',
-                    text: `Se registraron ${result} intenciones.`,
-                    timer: 2000, showConfirmButton: false
-                });
-                document.getElementById('c_text').value = ''; // Limpiar textarea
-                await refrescarCalendario();
+            if(eventosFuturos.length === 0) {
+                container.innerHTML = `<p class="text-muted small mt-3">No hay intenciones próximas.</p>`;
+                return;
             }
+
+            let html = '';
+
+            if (modo === 'resumen') {
+                // Agrupar por Fecha + Hora + Tipo
+                let resumen = {};
+                eventosFuturos.forEach(int => {
+                    let key = `${int.fechaMisa}|${int.horaMisa}|${int.tipo}`;
+                    if(!resumen[key]) resumen[key] = { fecha: int.fechaMisa, hora: int.horaMisa, tipo: int.tipo, qty: 0 };
+                    resumen[key].qty++;
+                });
+
+                Object.values(resumen).forEach(r => {
+                    let dotClass = r.tipo === 'Comunitaria' ? 'dot-comunitaria' : 'dot-particular';
+                    let titulo = r.tipo === 'Comunitaria' ? 'Misa Comunitaria' : 'Misa Particular';
+                    let desc = r.tipo === 'Comunitaria' ? `${r.qty} Intenciones registradas` : `1 Intención registrada`;
+                    let fechaFormat = formatearFechaUX(r.fecha);
+
+                    html += `
+                    <div class="event-card mb-2" onclick="abrirModalDia('${r.fecha}')">
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="dot ${dotClass} me-2"></span>
+                            <span class="text-muted small fw-medium">${fechaFormat} - ${r.hora}</span>
+                            <i class="fa-solid fa-ellipsis ms-auto text-muted" style="opacity:0.5"></i>
+                        </div>
+                        <h6 class="fw-bold mb-1" style="color: #1e293b;">${titulo}</h6>
+                        <p class="text-muted small mb-0">${desc}</p>
+                    </div>`;
+                });
+            } else {
+                // Detallado por intención
+                eventosFuturos.forEach(int => {
+                    let dotClass = int.tipo === 'Comunitaria' ? 'dot-comunitaria' : 'dot-particular';
+                    let fechaFormat = formatearFechaUX(int.fechaMisa);
+
+                    html += `
+                    <div class="event-card mb-2" onclick="abrirModalDia('${int.fechaMisa}')">
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="dot ${dotClass} me-2"></span>
+                            <span class="text-muted small fw-medium">${fechaFormat} - ${int.horaMisa}</span>
+                        </div>
+                        <h6 class="fw-bold mb-1" style="color: #1e293b;">${int.intencion}</h6>
+                        <p class="text-muted small mb-0">${int.categoria} <span class="badge bg-light text-dark ms-1">${int.tipo}</span></p>
+                    </div>`;
+                });
+            }
+
+            container.innerHTML = html;
         }
 
-        // 5. Guardado Particular
-        async function guardarParticular(e) {
-            e.preventDefault();
-            const btn = document.getElementById('btnParticular');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
-            btn.disabled = true;
-
-            const payload = {
-                fechaMisa: document.getElementById('p_fecha').value,
-                horaMisa: document.getElementById('p_hora').value,
-                sacerdote: document.getElementById('p_sacerdote').value,
-                categoria: document.getElementById('p_categoria').value,
-                intencion: document.getElementById('p_intencion').value,
-                motivo: document.getElementById('p_motivo').value
-            };
-
-            const result = await fetchAPI('saveParticular', payload);
-            
-            btn.innerHTML = '<i class="fa-solid fa-paper-plane me-2"></i> Registrar Misa';
-            btn.disabled = false;
-
-            if(result) {
-                Swal.fire({
-                    icon: 'success', title: 'Misa Particular Registrada',
-                    timer: 2000, showConfirmButton: false
-                });
-                document.getElementById('formParticular').reset();
-                llenarSacerdotes(); // Recuperar default
-                await refrescarCalendario();
-            }
+        function formatearFechaUX(fechaStr) {
+            const meses =['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+            const partes = fechaStr.split('-');
+            return `${partes[2]} ${meses[parseInt(partes[1])-1]}, ${partes[0]}`;
         }
 
-        // 6. Calendario Dinámico e Interactivo (FullCalendar)
+        // ==========================================
+        //  CALENDARIO (Ajustado al diseño UI)
+        // ==========================================
         function initCalendar() {
             const calendarEl = document.getElementById('calendar');
             calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 locale: 'es',
+                height: 'auto',
+                // Toolbar idéntico a la imagen
                 headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,listWeek'
+                    left: 'title prev,next',
+                    center: '',
+                    right: 'timeGridDay,timeGridWeek,dayGridMonth'
                 },
+                buttonText: { day: 'Día', week: 'Semana', month: 'Mes' },
                 events: mapearEventos(),
-                eventClick: function(info) {
-                    abrirModalDia(info.event.startStr);
-                }
+                eventClick: function(info) { abrirModalDia(info.event.startStr); }
             });
             calendar.render();
         }
 
         function mapearEventos() {
-            // Agrupamos por fecha para no saturar el calendario visualmente
             let resumen = {};
             localData.intenciones.forEach(int => {
-                let clave = `${int.fechaMisa}_${int.tipo}`;
+                let clave = `${int.fechaMisa}_${int.tipo}_${int.horaMisa}`;
                 if(!resumen[clave]) {
-                    resumen[clave] = { fecha: int.fechaMisa, tipo: int.tipo, cantidad: 0 };
+                    resumen[clave] = { fecha: int.fechaMisa, hora: int.horaMisa, tipo: int.tipo, desc: int.intencion, qty: 0 };
                 }
-                resumen[clave].cantidad++;
+                resumen[clave].qty++;
             });
 
             return Object.values(resumen).map(r => ({
-                title: `${r.cantidad} ${r.tipo === 'Comunitaria' ? 'Comunitarias' : 'Particulares'}`,
+                title: r.tipo === 'Comunitaria' ? `${r.qty} Comunitarias` : `1 Particular`,
                 start: r.fecha,
-                classNames: [r.tipo === 'Comunitaria' ? 'event-comunitaria' : 'event-particular']
+                classNames:[r.tipo === 'Comunitaria' ? 'event-comunitaria' : 'event-particular']
             }));
         }
 
-        async function refrescarCalendario() {
+        async function refrescarData() {
             await cargarDatosIniciales();
             calendar.removeAllEvents();
             calendar.addEventSource(mapearEventos());
+            renderSideList();
         }
 
-        // 7. Visualización y Edición (Modal de Día) - Perfecto para las secretarias
+        // ==========================================
+        //  MODALES Y EDICIÓN
+        // ==========================================
         function abrirModalDia(fecha) {
             const diaIntenciones = localData.intenciones.filter(i => i.fechaMisa === fecha);
             const body = document.getElementById('diaModalBody');
-            document.getElementById('diaModalTitle').innerText = `Misales del: ${fecha}`;
+            
+            document.getElementById('diaModalTitle').innerText = `Misales del ${formatearFechaUX(fecha)}`;
             
             if(diaIntenciones.length === 0) {
                 body.innerHTML = '<p class="text-muted">No hay intenciones registradas.</p>';
             } else {
                 let html = '';
-                // Agrupar por Horario y Tipo
                 let agrupado = {};
                 diaIntenciones.forEach(int => {
                     let key = `${int.horaMisa} - ${int.tipo}`;
-                    if(!agrupado[key]) agrupado[key] =[];
+                    if(!agrupado[key]) agrupado[key] = [];
                     agrupado[key].push(int);
                 });
 
                 for(let grupo in agrupado) {
                     html += `<div class="mb-4">
-                                <h6 class="fw-bold bg-light p-2 rounded border-start border-4 border-primary">${grupo}</h6>
-                                <ul class="list-group list-group-flush">`;
+                                <h6 class="fw-bold px-3 py-2 rounded-3 text-primary" style="background-color: var(--primary-light);">${grupo}</h6>
+                                <ul class="list-group list-group-flush mt-2">`;
                     agrupado[grupo].forEach(int => {
                         html += `
-                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-2 mb-1 bg-light rounded-3">
                             <div>
-                                <strong>${int.intencion}</strong> 
-                                <span class="badge bg-secondary ms-2">${int.categoria}</span>
-                                ${int.motivo ? `<br><small class="text-muted">${int.motivo}</small>` : ''}
+                                <strong style="color: var(--text-main);">${int.intencion}</strong> 
+                                <span class="badge ms-2 fw-normal" style="background-color: #e2e8f0; color: #475569;">${int.categoria}</span>
+                                ${int.motivo ? `<div class="text-muted small mt-1"><i class="fa-solid fa-quote-left me-1 opacity-50"></i>${int.motivo}</div>` : ''}
                             </div>
-                            <button class="btn btn-sm btn-outline-primary" onclick="editarIntencion('${int.id}', '${int.intencion}', '${int.categoria}')">
+                            <button class="btn btn-sm text-primary shadow-none" style="background: white;" onclick="abrirEdicion('${int.id}', '${int.intencion.replace(/'/g, "\\'")}', '${int.categoria}')" title="Editar">
                                 <i class="fa-solid fa-pen"></i>
                             </button>
                         </li>`;
@@ -489,38 +639,82 @@
                 }
                 body.innerHTML = html;
             }
-
             new bootstrap.Modal(document.getElementById('diaModal')).show();
         }
 
-        // 8. Edición In-App
-        async function editarIntencion(id, nombreActual, catActual) {
-            const { value: formValues } = await Swal.fire({
-                title: 'Editar Intención',
-                html:
-                    `<input id="swal-input1" class="swal2-input" value="${nombreActual}">
-                     <select id="swal-input2" class="swal2-input">
-                        <option value="Por la Salud" ${catActual=='Por la Salud'?'selected':''}>Por la Salud</option>
-                        <option value="Por la Vida y la Salud" ${catActual=='Por la Vida y la Salud'?'selected':''}>Vida y Salud</option>
-                        <option value="En Acción de Gracias" ${catActual=='En Acción de Gracias'?'selected':''}>Acción de Gracias</option>
-                        <option value="Por el Alma" ${catActual=='Por el Alma'?'selected':''}>Por el Alma</option>
-                     </select>`,
-                focusConfirm: false,
-                showCancelButton: true,
-                preConfirm: () => {
-                    return[ document.getElementById('swal-input1').value, document.getElementById('swal-input2').value ]
-                }
-            });
+        // Reemplazo del SweetAlert por Modal Bootstrap Aesthetic
+        function abrirEdicion(id, nombreActual, catActual) {
+            bootstrap.Modal.getInstance(document.getElementById('diaModal')).hide(); // Ocultar el primer modal
+            
+            document.getElementById('edit_id').value = id;
+            document.getElementById('edit_nombre').value = nombreActual;
+            document.getElementById('edit_categoria').value = catActual;
 
-            if (formValues) {
-                document.getElementById('loader').style.display = 'flex';
-                await fetchAPI('updateIntencion', { id: id, intencion: formValues[0], categoria: formValues[1] });
-                await refrescarCalendario();
-                document.getElementById('loader').style.display = 'none';
-                
-                // Cerrar modal temporal
-                bootstrap.Modal.getInstance(document.getElementById('diaModal')).hide();
-                Swal.fire('¡Actualizado!', 'La intención fue modificada', 'success');
+            new bootstrap.Modal(document.getElementById('editIntencionModal')).show();
+        }
+
+        async function guardarEdicion() {
+            const btn = document.getElementById('btnGuardarEdicion');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
+            btn.disabled = true;
+
+            const id = document.getElementById('edit_id').value;
+            const intencion = document.getElementById('edit_nombre').value;
+            const categoria = document.getElementById('edit_categoria').value;
+
+            const result = await fetchAPI('updateIntencion', { id, intencion, categoria });
+
+            btn.innerHTML = 'Guardar Cambios';
+            btn.disabled = false;
+
+            if (result) {
+                bootstrap.Modal.getInstance(document.getElementById('editIntencionModal')).hide();
+                Swal.fire({ icon: 'success', title: '¡Actualizado!', showConfirmButton: false, timer: 1500 });
+                await refrescarData();
+            }
+        }
+
+        // Guardados de registro
+        async function guardarComunitaria(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnComunitaria');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...'; btn.disabled = true;
+
+            const payload = {
+                fechaMisa: document.getElementById('c_fecha').value, horaMisa: document.getElementById('c_hora').value,
+                sacerdote: document.getElementById('c_sacerdote').value, categoria: document.getElementById('c_categoria').value,
+                textoIntenciones: document.getElementById('c_text').value
+            };
+
+            const result = await fetchAPI('saveComunitarias', payload);
+            btn.innerHTML = '<i class="fa-solid fa-floppy-disk me-2"></i> Guardar Lista'; btn.disabled = false;
+
+            if(result) {
+                Swal.fire({ icon: 'success', title: 'Completado', text: `${result} intenciones guardadas.`, timer: 2000, showConfirmButton: false });
+                document.getElementById('c_text').value = ''; 
+                await refrescarData();
+            }
+        }
+
+        async function guardarParticular(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnParticular');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Registrando...'; btn.disabled = true;
+
+            const payload = {
+                fechaMisa: document.getElementById('p_fecha').value, horaMisa: document.getElementById('p_hora').value,
+                sacerdote: document.getElementById('p_sacerdote').value, categoria: document.getElementById('p_categoria').value,
+                intencion: document.getElementById('p_intencion').value, motivo: document.getElementById('p_motivo').value
+            };
+
+            const result = await fetchAPI('saveParticular', payload);
+            btn.innerHTML = '<i class="fa-solid fa-paper-plane me-2"></i> Registrar Misa'; btn.disabled = false;
+
+            if(result) {
+                Swal.fire({ icon: 'success', title: 'Misa Registrada', timer: 2000, showConfirmButton: false });
+                document.getElementById('formParticular').reset();
+                llenarSacerdotes(); 
+                await refrescarData();
             }
         }
     </script>
